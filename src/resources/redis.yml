@@ -1,0 +1,4 @@
+host: localhost
+port: 6379
+password: p@ssw0rd
+database_id: 1
