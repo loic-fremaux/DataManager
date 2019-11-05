@@ -3,17 +3,23 @@ package fr.thefoxy41.dataManager.mysql;
 import fr.thefoxy41.dataManager.auth.Credentials;
 
 public class MysqlCredentials extends Credentials {
-    private String dataBaseName;
+    private String databaseName;
     private int poolSize;
 
-    MysqlCredentials(String host, String user, String pass, String dataBaseName, String serviceName, int port, int poolSize) {
+    MysqlCredentials() {}
+
+    MysqlCredentials(String host, String user, String pass, String databaseName, String serviceName, int port, int poolSize) {
         super(host, user, pass, serviceName, port);
-        this.dataBaseName = dataBaseName;
+        this.databaseName = databaseName;
         this.poolSize =  poolSize;
     }
 
     public int getPoolSize() {
         return poolSize;
+    }
+
+    public String getDatabase() {
+        return databaseName;
     }
 
     public String toUri() {
@@ -22,7 +28,7 @@ public class MysqlCredentials extends Credentials {
                 ":" +
                 port +
                 "/" +
-                dataBaseName
+                databaseName
                 + "?useSSL=false";
     }
 }

@@ -1,40 +1,10 @@
 package fr.thefoxy41.dataManager.config.helpers;
 
-import org.apache.commons.configuration2.YAMLConfiguration;
-import org.apache.commons.configuration2.ex.ConfigurationException;
-
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 public class Configs {
-
-    /**
-     * get YAMLConfiguration from file
-     *
-     * @param file File
-     * @return YAMLConfiguration
-     */
-    public static YAMLConfiguration getConfiguration(File file) {
-        InputStream inputStream = null;
-        try {
-            inputStream = new FileInputStream(file);
-            YAMLConfiguration configuration = new YAMLConfiguration();
-            configuration.read(inputStream);
-            return configuration;
-        } catch (IOException | ConfigurationException e) {
-            return null;
-        } finally {
-            if (inputStream != null) {
-                try {
-                    inputStream.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-    }
 
     /**
      * save YAMLConfiguration to specified file
@@ -42,34 +12,34 @@ public class Configs {
      * @param configuration YAMLConfiguration
      * @param file          File
      */
-    public static void save(YAMLConfiguration configuration, File file) {
-        Writer writer = null;
+    public static void save(InputStream configuration, File file) {
         try {
-            Files.createIfEmpty(file);
-
-            writer = new FileWriter(file);
-            configuration.write(writer);
-            writer.flush();
-        } catch (ConfigurationException | IOException e) {
+            java.nio.file.Files.copy(configuration, Paths.get(file.getPath()), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            if (writer != null) {
-                try {
-                    writer.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
         }
     }
 
-    public static boolean isValid(String modelName, YAMLConfiguration config) {
-        YAMLConfiguration defaultConfig = Configs.getResourceConfig(modelName);
+    public static boolean isValid(String modelName, InputStream config) {
+        InputStream defaultConfig = Configs.getResourceConfig(modelName);
 
+
+        try {
+            int ch = defaultConfig.read();
+            while (ch != -1) {
+                System.out.print("§4§lCONFIG DATA§r" + (char) ch);
+                ch = defaultConfig.read();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        /*
         List<String> keys = new ArrayList<>();
 
         // add default keys to list
-        Iterator<String> defaultKeys = defaultConfig.getKeys();
+        Iterator<String> defaultKeys = defaultConfig.();
         while (defaultKeys.hasNext()) {
             String key = defaultKeys.next();
             keys.add(key);
@@ -81,23 +51,11 @@ public class Configs {
             String key = configKeys.next();
             if (!keys.contains(key)) return false;
         }
-
+*/
         return true;
     }
 
-    public static YAMLConfiguration getResourceConfig(String name) {
-        InputStream stream = Configs.class.getClassLoader().getResourceAsStream(name + (name.endsWith(".yml") ? "" : ".yml"));
-        YAMLConfiguration configuration = new YAMLConfiguration();
-
-        if (stream != null) {
-            try {
-                configuration.read(stream);
-                stream.close();
-            } catch (IOException | ConfigurationException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return configuration;
+    public static InputStream getResourceConfig(String name) {
+        return Configs.class.getClassLoader().getResourceAsStream(name + (name.endsWith(".yml") ? "" : ".yml"));
     }
 }

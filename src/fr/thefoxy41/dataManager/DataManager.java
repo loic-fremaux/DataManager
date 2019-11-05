@@ -4,6 +4,7 @@ import fr.thefoxy41.dataManager.exceptions.ModuleNotInitializedException;
 import fr.thefoxy41.dataManager.interfaces.Module;
 import fr.thefoxy41.dataManager.interfaces.Plugin;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,7 +28,7 @@ public class DataManager {
             Module module = moduleClass.newInstance();
             module.init(plugin);
             modules.put(moduleClass, module);
-        } catch (InstantiationException | IllegalAccessException e) {
+        } catch (InstantiationException | IllegalAccessException | IOException e) {
             e.printStackTrace();
         }
 

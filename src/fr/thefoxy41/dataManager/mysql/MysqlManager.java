@@ -1,13 +1,13 @@
 package fr.thefoxy41.dataManager.mysql;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import fr.thefoxy41.dataManager.config.helpers.Configs;
 import fr.thefoxy41.dataManager.exceptions.InvalidAccessException;
 import fr.thefoxy41.dataManager.interfaces.Module;
 import fr.thefoxy41.dataManager.interfaces.Plugin;
-import org.apache.commons.configuration2.YAMLConfiguration;
 
-import java.io.File;
-import java.security.InvalidParameterException;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,7 +23,7 @@ public class MysqlManager implements Module {
         return mysqlAccess.get(name);
     }
 
-    public void init(Plugin plugin) {
+    public void init(Plugin plugin) throws IOException {
         this.plugin = plugin;
         String configsPath = plugin.getConfigFolder().getPath() + "/mysql";
 
@@ -41,36 +41,23 @@ public class MysqlManager implements Module {
         if (files == null) return;
 
         for (File fileConfig : files) {
-            YAMLConfiguration config = Configs.getConfiguration(fileConfig);
+            ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+            InputStream input = new FileInputStream(fileConfig);
 
-            if (config == null || !Configs.isValid(DEFAULT_CONFIG, config)) {
-                plugin.log("Skipped " + fileConfig.getName() + ": configuration is not valid (missing keys)");
-                continue;
-            }
+            MysqlCredentials credentials = mapper.readValue(input, MysqlCredentials.class);
+            String clientName = plugin.getName() + "_" + this.getClass().getName() + "_client";
+            credentials.setClientName(clientName);
+            MysqlAccess access = new MysqlAccess(credentials);
 
-            String host = config.getString("host");
-            String user = config.getString("user");
-            String dbName = config.getString("database_name");
-            int port = config.getInt("port");
-            int poolSize = config.containsKey("poolSize") ? config.getInt("pool_size") : DEFAULT_POOL_SIZE;
-            if (poolSize < 1 || poolSize > 100) {
-                throw new InvalidParameterException("Pool size must be an integer between 1 and 100");
-            }
-
-            MysqlCredentials credentials = new MysqlCredentials(
-                    host,
-                    user,
-                    config.getString("password"),
-                    dbName,
-                    plugin.getName() + "_" + this.getClass().getName() + "_client",
-                    port,
-                    poolSize
+            plugin.log("New connection established"
+                    + " to " + credentials.getHost()
+                    + " on port " + credentials.getPort()
+                    + " with user " + credentials.getUser()
+                    + " on database " + credentials.getDatabase()
+                    + "."
             );
 
-            MysqlAccess access = new MysqlAccess(credentials);
-            plugin.log("New connection established to " + host + " on port " + port + " with user " + user + " on database " + dbName + ".");
-
-            mysqlAccess.put(dbName, access);
+            mysqlAccess.put(credentials.getDatabase(), access);
         }
     }
 

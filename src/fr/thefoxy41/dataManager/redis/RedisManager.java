@@ -1,12 +1,16 @@
 package fr.thefoxy41.dataManager.redis;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import fr.thefoxy41.dataManager.config.helpers.Configs;
 import fr.thefoxy41.dataManager.exceptions.InvalidAccessException;
 import fr.thefoxy41.dataManager.interfaces.Module;
 import fr.thefoxy41.dataManager.interfaces.Plugin;
-import org.apache.commons.configuration2.YAMLConfiguration;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,7 +26,7 @@ public class RedisManager implements Module {
         return redisAccess.get(id);
     }
 
-    public void init(Plugin plugin) {
+    public void init(Plugin plugin) throws IOException {
         this.plugin = plugin;
         String configsPath = plugin.getConfigFolder().getPath() + "/redis";
 
@@ -40,29 +44,22 @@ public class RedisManager implements Module {
         if (files == null) return;
 
         for (File fileConfig : files) {
-            YAMLConfiguration config = Configs.getConfiguration(fileConfig);
+            ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+            InputStream input = new FileInputStream(fileConfig);
 
-            if (config == null || !Configs.isValid(DEFAULT_CONFIG, config)) {
-                plugin.log("Skipped " + fileConfig.getName() + ": configuration is not valid (missing keys)");
-                continue;
-            }
+            RedisCredentials credentials = mapper.readValue(input, RedisCredentials.class);
+            String clientName = plugin.getName() + "_" + this.getClass().getName() + "_client";
+            credentials.setClientName(clientName);
+            RedisAccess access = new RedisAccess(credentials);
 
-            String host = config.getString("host");
-            int dbId = config.getInt("database_id");
-            int port = config.getInt("port");
-
-            RedisCredentials credentials = new RedisCredentials(
-                    host,
-                    config.getString("password"),
-                    port,
-                    dbId,
-                    plugin.getName() + "_" + this.getClass().getName() + "_client"
+            plugin.log("New connection established"
+                    + " to " + credentials.getHost()
+                    + " on port " + credentials.getPort()
+                    + " on redis cache "
+                    + credentials.getDatabaseId() + "."
             );
 
-            RedisAccess access = new RedisAccess(credentials);
-            plugin.log("New connection established to " + host + " on port " + port + " on redis cache " + dbId + ".");
-
-            redisAccess.put(dbId, access);
+            redisAccess.put(credentials.getDatabaseId(), access);
         }
     }
 

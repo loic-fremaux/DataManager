@@ -1,5 +1,5 @@
 host: localhost
 port: 3306
 user: username
-password: p@ssw0rd
-database_name: my_database
+password: p@assw0rd
+databaseName: my_database

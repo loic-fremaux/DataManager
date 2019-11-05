@@ -7,6 +7,8 @@ public abstract class Credentials {
     protected String clientName;
     protected int port;
 
+    public Credentials() {}
+
     public Credentials(String host, String user, String password, String clientName, int port) {
         this.host = host;
         this.user = user;
@@ -33,6 +35,10 @@ public abstract class Credentials {
 
     public String getClientName() {
         return clientName;
+    }
+
+    public void setClientName(String clientName) {
+        this.clientName = clientName;
     }
 
     public abstract String toUri();
