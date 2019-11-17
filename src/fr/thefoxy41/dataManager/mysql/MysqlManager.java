@@ -1,5 +1,6 @@
 package fr.thefoxy41.dataManager.mysql;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import fr.thefoxy41.dataManager.config.helpers.Configs;
@@ -42,6 +43,7 @@ public class MysqlManager implements Module {
 
         for (File fileConfig : files) {
             ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             InputStream input = new FileInputStream(fileConfig);
 
             MysqlCredentials credentials = mapper.readValue(input, MysqlCredentials.class);

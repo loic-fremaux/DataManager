@@ -10,10 +10,11 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="slf4j-api-1.7.28" level="application" />
     <orderEntry type="library" name="HikariCP-3.3.1" level="application" />
-    <orderEntry type="library" name="redisson-3.5.0" level="application" />
-    <orderEntry type="library" name="jackson-annotations-2.9.0" level="application" />
     <orderEntry type="library" name="jackson-core-2.10.0" level="application" />
-    <orderEntry type="library" name="jackson-databind-2.9.0" level="application" />
-    <orderEntry type="library" name="jackson-dataformat-yaml-2.9.0" level="application" />
+    <orderEntry type="library" name="jackson-annotations-2.10.0" level="application" />
+    <orderEntry type="library" name="jackson-databind-2.9.8" level="application" />
+    <orderEntry type="library" name="jackson-dataformat-yaml-2.10.0" level="application" />
+    <orderEntry type="library" name="redisson-3.2.0" level="application" />
+    <orderEntry type="library" name="snakeyaml-1.25" level="application" />
   </component>
 </module>

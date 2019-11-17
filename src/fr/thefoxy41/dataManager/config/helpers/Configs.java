@@ -14,6 +14,7 @@ public class Configs {
      */
     public static void save(InputStream configuration, File file) {
         try {
+            file.mkdirs();
             java.nio.file.Files.copy(configuration, Paths.get(file.getPath()), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e) {
             e.printStackTrace();
