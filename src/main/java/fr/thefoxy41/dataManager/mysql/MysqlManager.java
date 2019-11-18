@@ -1,5 +1,6 @@
-package fr.thefoxy41.dataManager.redis;
+package fr.thefoxy41.dataManager.mysql;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import fr.thefoxy41.dataManager.config.helpers.Configs;
@@ -14,21 +15,20 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RedisManager implements Module {
+public class MysqlManager implements Module {
     private Plugin plugin = null;
-    private static final int DEFAULT_POOL_SIZE = 4;
-    private static Map<Integer, RedisAccess> redisAccess = new HashMap<>();
+    private static Map<String, MysqlAccess> mysqlAccess = new HashMap<>();
 
-    public static final String DEFAULT_CONFIG = "redis.yml";
+    public static final String DEFAULT_CONFIG = "main/resources/mysql.yml";
 
-    public RedisAccess getAccess(int id) throws InvalidAccessException {
-        if (!redisAccess.containsKey(id)) throw new InvalidAccessException("Redis access " + id + " not found");
-        return redisAccess.get(id);
+    public MysqlAccess getAccess(String name) throws InvalidAccessException {
+        if (!mysqlAccess.containsKey(name)) throw new InvalidAccessException("MySQL access '" + name + "' not found");
+        return mysqlAccess.get(name);
     }
 
     public void init(Plugin plugin) throws IOException {
         this.plugin = plugin;
-        String configsPath = plugin.getConfigFolder().getPath() + "/redis";
+        String configsPath = plugin.getConfigFolder().getPath() + "/mysql";
 
         File file = new File(configsPath);
         if (!file.exists()) {
@@ -37,7 +37,7 @@ public class RedisManager implements Module {
                     new File(file.getPath(), "default.yml")
             );
 
-            plugin.log("Default redis configuration moved to " + file.getPath() + ".");
+            plugin.log("Default mysql configuration moved to " + file.getPath() + ".");
         }
 
         File[] files = file.listFiles();
@@ -45,27 +45,29 @@ public class RedisManager implements Module {
 
         for (File fileConfig : files) {
             ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             InputStream input = new FileInputStream(fileConfig);
 
-            RedisCredentials credentials = mapper.readValue(input, RedisCredentials.class);
+            MysqlCredentials credentials = mapper.readValue(input, MysqlCredentials.class);
             String clientName = plugin.getName() + "_" + this.getClass().getName() + "_client";
             credentials.setClientName(clientName);
-            RedisAccess access = new RedisAccess(credentials);
+            MysqlAccess access = new MysqlAccess(credentials);
 
             plugin.log("New connection established"
                     + " to " + credentials.getHost()
                     + " on port " + credentials.getPort()
-                    + " on redis cache "
-                    + credentials.getDatabaseId() + "."
+                    + " with user " + credentials.getUser()
+                    + " on database " + credentials.getDbName()
+                    + "."
             );
 
-            redisAccess.put(credentials.getDatabaseId(), access);
+            mysqlAccess.put(fileConfig.getName().replace(".yml", ""), access);
         }
     }
 
     public void close() {
-        for (RedisAccess access : redisAccess.values()) {
-            access.close();
+        for (MysqlAccess access : mysqlAccess.values()) {
+            access.closePool();
             plugin.log("Connection to " + access.getCredentials().getHost() + " closed.");
         }
     }
