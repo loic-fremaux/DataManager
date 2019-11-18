@@ -19,7 +19,7 @@ public class MysqlManager implements Module {
     private Plugin plugin = null;
     private static Map<String, MysqlAccess> mysqlAccess = new HashMap<>();
 
-    public static final String DEFAULT_CONFIG = "main/resources/mysql.yml";
+    public static final String DEFAULT_CONFIG = "mysql.yml";
 
     public MysqlAccess getAccess(String name) throws InvalidAccessException {
         if (!mysqlAccess.containsKey(name)) throw new InvalidAccessException("MySQL access '" + name + "' not found");

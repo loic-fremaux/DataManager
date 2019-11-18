@@ -18,7 +18,7 @@ public class RedisManager implements Module {
     private Plugin plugin = null;
     private static Map<String, RedisAccess> redisAccess = new HashMap<>();
 
-    public static final String DEFAULT_CONFIG = "main/resources/redis.yml";
+    public static final String DEFAULT_CONFIG = "redis.yml";
 
     public RedisAccess getAccess(String name) throws InvalidAccessException {
         if (!redisAccess.containsKey(name)) throw new InvalidAccessException("Redis access " + name + " not found");

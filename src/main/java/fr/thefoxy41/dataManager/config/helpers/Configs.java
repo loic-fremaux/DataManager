@@ -23,18 +23,14 @@ public class Configs {
 
     public static boolean isValid(String modelName, InputStream config) {
         InputStream defaultConfig = Configs.getResourceConfig(modelName);
-
-
         try {
             int ch = defaultConfig.read();
             while (ch != -1) {
-                System.out.print("§4§lCONFIG DATA§r" + (char) ch);
                 ch = defaultConfig.read();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-
 
         /*
         List<String> keys = new ArrayList<>();
