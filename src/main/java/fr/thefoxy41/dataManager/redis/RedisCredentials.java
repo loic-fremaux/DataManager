@@ -17,6 +17,6 @@ public class RedisCredentials extends Credentials {
     }
 
     public String toUri() {
-        return "redis://" + host + ":" + port;
+        return host + ":" + port;
     }
 }

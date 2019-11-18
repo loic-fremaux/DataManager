@@ -1,6 +1,5 @@
-package fr.thefoxy41.dataManager.mysql;
+package fr.thefoxy41.dataManager.redis;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import fr.thefoxy41.dataManager.config.helpers.Configs;
@@ -8,25 +7,27 @@ import fr.thefoxy41.dataManager.exceptions.InvalidAccessException;
 import fr.thefoxy41.dataManager.interfaces.Module;
 import fr.thefoxy41.dataManager.interfaces.Plugin;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MysqlManager implements Module {
+public class RedisManager implements Module {
     private Plugin plugin = null;
-    private static final int DEFAULT_POOL_SIZE = 4;
-    private static Map<String, MysqlAccess> mysqlAccess = new HashMap<>();
+    private static Map<String, RedisAccess> redisAccess = new HashMap<>();
 
-    public static final String DEFAULT_CONFIG = "mysql.yml";
+    public static final String DEFAULT_CONFIG = "redis.yml";
 
-    public MysqlAccess getAccess(String name) throws InvalidAccessException {
-        if (!mysqlAccess.containsKey(name)) throw new InvalidAccessException("MySQL access '" + name + "' not found");
-        return mysqlAccess.get(name);
+    public RedisAccess getAccess(String name) throws InvalidAccessException {
+        if (!redisAccess.containsKey(name)) throw new InvalidAccessException("Redis access " + name + " not found");
+        return redisAccess.get(name);
     }
 
     public void init(Plugin plugin) throws IOException {
         this.plugin = plugin;
-        String configsPath = plugin.getConfigFolder().getPath() + "/mysql";
+        String configsPath = plugin.getConfigFolder().getPath() + "/redis";
 
         File file = new File(configsPath);
         if (!file.exists()) {
@@ -35,7 +36,7 @@ public class MysqlManager implements Module {
                     new File(file.getPath(), "default.yml")
             );
 
-            plugin.log("Default mysql configuration moved to " + file.getPath() + ".");
+            plugin.log("Default redis configuration moved to " + file.getPath() + ".");
         }
 
         File[] files = file.listFiles();
@@ -43,29 +44,29 @@ public class MysqlManager implements Module {
 
         for (File fileConfig : files) {
             ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             InputStream input = new FileInputStream(fileConfig);
 
-            MysqlCredentials credentials = mapper.readValue(input, MysqlCredentials.class);
+            RedisCredentials credentials = mapper.readValue(input, RedisCredentials.class);
             String clientName = plugin.getName() + "_" + this.getClass().getName() + "_client";
             credentials.setClientName(clientName);
-            MysqlAccess access = new MysqlAccess(credentials);
+            RedisAccess access = new RedisAccess(credentials);
+            String name = fileConfig.getName().replace(".yml", "");
 
             plugin.log("New connection established"
                     + " to " + credentials.getHost()
                     + " on port " + credentials.getPort()
-                    + " with user " + credentials.getUser()
-                    + " on database " + credentials.getDatabase()
-                    + "."
+                    + " on redis cache "
+                    + credentials.getDatabaseId() + "("
+                    + name + ")."
             );
 
-            mysqlAccess.put(credentials.getDatabase(), access);
+            redisAccess.put(name, access);
         }
     }
 
     public void close() {
-        for (MysqlAccess access : mysqlAccess.values()) {
-            access.closePool();
+        for (RedisAccess access : redisAccess.values()) {
+            access.close();
             plugin.log("Connection to " + access.getCredentials().getHost() + " closed.");
         }
     }

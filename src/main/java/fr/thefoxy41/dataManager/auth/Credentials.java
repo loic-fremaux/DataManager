@@ -6,6 +6,9 @@ public abstract class Credentials {
     protected String password;
     protected String clientName;
     protected int port;
+    protected int poolSize;
+
+    public static final int DEFAULT_POOL_SIZE = 4;
 
     public Credentials() {}
 
@@ -31,6 +34,10 @@ public abstract class Credentials {
 
     public int getPort() {
         return port;
+    }
+
+    public int getPoolSize() {
+        return Math.max(poolSize, DEFAULT_POOL_SIZE);
     }
 
     public String getClientName() {
