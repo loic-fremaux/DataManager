@@ -18,8 +18,8 @@ public class RedisAccess {
     public RedissonClient setupRedisson(RedisCredentials credentials) {
         Config config = new Config();
         config.setCodec(new JsonJacksonCodec());
-        config.setThreads(4);
-        config.setNettyThreads(4);
+        config.setThreads(12);
+        config.setNettyThreads(12);
         config.useSingleServer()
                 .setAddress(credentials.toUri())
                 .setPassword(credentials.getPassword())
