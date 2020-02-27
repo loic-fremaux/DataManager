@@ -6,6 +6,7 @@ import fr.thefoxy41.dataManager.config.helpers.Configs;
 import fr.thefoxy41.dataManager.exceptions.InvalidAccessException;
 import fr.thefoxy41.dataManager.interfaces.Module;
 import fr.thefoxy41.dataManager.interfaces.Plugin;
+import org.redisson.api.RedissonClient;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -61,6 +62,8 @@ public class RedisManager implements Module {
             );
 
             redisAccess.put(name, access);
+            RedissonClient client = access.getRedissonClient();
+            if (client == null) throw new IOException("Connection not available");
         }
     }
 

@@ -23,15 +23,17 @@ public class DataManager {
      * @param moduleClass module type
      * @return this
      */
-    public DataManager with(Class<? extends Module> moduleClass) {
+    public DataManager with(Class<? extends Module> moduleClass) throws IOException {
+        Module module;
         try {
-            Module module = moduleClass.newInstance();
-            module.init(plugin);
-            modules.put(moduleClass, module);
-        } catch (InstantiationException | IllegalAccessException | IOException e) {
+            module = moduleClass.newInstance();
+        } catch (InstantiationException | IllegalAccessException e) {
             e.printStackTrace();
+            return null;
         }
 
+        module.init(plugin);
+        modules.put(moduleClass, module);
         return this;
     }
 
