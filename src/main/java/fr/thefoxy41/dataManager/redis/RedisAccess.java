@@ -4,6 +4,7 @@ import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
 import org.redisson.codec.JsonJacksonCodec;
 import org.redisson.config.Config;
+import org.redisson.config.TransportMode;
 
 public class RedisAccess {
     private RedisCredentials credentials;
@@ -16,6 +17,7 @@ public class RedisAccess {
 
     public RedissonClient setupRedisson(RedisCredentials credentials) {
         Config config = new Config();
+        config.setTransportMode(TransportMode.NIO);
         config.setCodec(new JsonJacksonCodec());
         config.setThreads(16);
         config.setNettyThreads(32);
@@ -25,6 +27,7 @@ public class RedisAccess {
                 .setDatabase(credentials.getDatabaseId())
                 .setRetryInterval(1000)
                 .setRetryAttempts(5)
+                .setConnectionMinimumIdleSize(credentials.getPoolSize() / 3)
                 .setConnectionPoolSize(credentials.getPoolSize())
                 .setClientName(credentials.getClientName());
 

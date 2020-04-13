@@ -2,6 +2,7 @@ package fr.thefoxy41.dataManager.mysql;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import io.netty.util.concurrent.DefaultThreadFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -29,6 +30,7 @@ public class MysqlAccess {
         hikariConfig.setConnectionTimeout(10_000L);
         hikariConfig.setPoolName(credentials.getClientName());
         hikariConfig.setMinimumIdle(2);
+        hikariConfig.setThreadFactory(new DefaultThreadFactory(credentials.getClientName()));
 
         hikariConfig.addDataSourceProperty("autoReconnect", true);
         hikariConfig.addDataSourceProperty("cachePrepStmts", true);
