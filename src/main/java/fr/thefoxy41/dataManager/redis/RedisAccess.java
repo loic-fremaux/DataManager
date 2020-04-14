@@ -2,7 +2,7 @@ package fr.thefoxy41.dataManager.redis;
 
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
-import org.redisson.codec.JsonJacksonCodec;
+import org.redisson.codec.FstCodec;
 import org.redisson.config.Config;
 import org.redisson.config.TransportMode;
 
@@ -18,16 +18,18 @@ public class RedisAccess {
     public RedissonClient setupRedisson(RedisCredentials credentials) {
         Config config = new Config();
         config.setTransportMode(TransportMode.NIO);
-        config.setCodec(new JsonJacksonCodec());
-        config.setThreads(16);
-        config.setNettyThreads(32);
+        config.setCodec(new FstCodec());
+        config.setThreads(credentials.getThreads());
+        config.setNettyThreads(credentials.getNettyThreads());
         config.useSingleServer()
                 .setAddress(credentials.toUri())
                 .setPassword(credentials.getPassword())
                 .setDatabase(credentials.getDatabaseId())
                 .setRetryInterval(1000)
                 .setRetryAttempts(5)
-                .setConnectionMinimumIdleSize(credentials.getPoolSize() / 3)
+                .setSubscriptionConnectionMinimumIdleSize(credentials.getMinimumSubscriptionIdle())
+                .setSubscriptionConnectionPoolSize(credentials.getSubscriptionPoolSize())
+                .setConnectionMinimumIdleSize(credentials.getMinimumIdle())
                 .setConnectionPoolSize(credentials.getPoolSize())
                 .setClientName(credentials.getClientName());
 

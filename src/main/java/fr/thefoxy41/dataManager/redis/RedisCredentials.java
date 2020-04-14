@@ -4,6 +4,8 @@ import fr.thefoxy41.dataManager.auth.Credentials;
 
 public class RedisCredentials extends Credentials {
     private int databaseId;
+    private int minimumSubscriptionIdle;
+    protected int subscriptionPoolSize;
 
     public RedisCredentials() {
     }
@@ -15,6 +17,14 @@ public class RedisCredentials extends Credentials {
 
     public int getDatabaseId() {
         return databaseId;
+    }
+
+    public int getMinimumSubscriptionIdle() {
+        return minimumSubscriptionIdle;
+    }
+
+    public int getSubscriptionPoolSize() {
+        return subscriptionPoolSize;
     }
 
     public String toUri() {

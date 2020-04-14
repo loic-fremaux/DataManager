@@ -29,8 +29,7 @@ public class MysqlAccess {
         hikariConfig.setLeakDetectionThreshold(10_000L);
         hikariConfig.setConnectionTimeout(10_000L);
         hikariConfig.setPoolName(credentials.getClientName());
-        hikariConfig.setMinimumIdle(2);
-        hikariConfig.setThreadFactory(new DefaultThreadFactory(credentials.getClientName()));
+        hikariConfig.setMinimumIdle(credentials.getMinimumIdle());
 
         hikariConfig.addDataSourceProperty("autoReconnect", true);
         hikariConfig.addDataSourceProperty("cachePrepStmts", true);
