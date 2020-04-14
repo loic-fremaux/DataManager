@@ -6,6 +6,8 @@ public class RedisCredentials extends Credentials {
     private int databaseId;
     private int subscriptionPoolSize;
     private int minimumSubscriptionIdle;
+    private int threads;
+    private int nettyThreads;
 
     public RedisCredentials() {
     }
@@ -25,6 +27,14 @@ public class RedisCredentials extends Credentials {
 
     public int getSubscriptionPoolSize() {
         return subscriptionPoolSize;
+    }
+
+    public int getThreads() {
+        return threads;
+    }
+
+    public int getNettyThreads() {
+        return nettyThreads;
     }
 
     public String toUri() {

@@ -8,8 +8,6 @@ public abstract class Credentials {
     protected int port;
     protected int poolSize;
     protected int minimumIdle;
-    protected int threads;
-    protected int nettyThreads;
 
     public static final int DEFAULT_POOL_SIZE = 4;
 
@@ -45,14 +43,6 @@ public abstract class Credentials {
 
     public int getMinimumIdle() {
         return minimumIdle;
-    }
-
-    public int getThreads() {
-        return threads;
-    }
-
-    public int getNettyThreads() {
-        return nettyThreads;
     }
 
     public String getClientName() {
