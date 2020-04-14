@@ -1,5 +1,7 @@
 host: localhost
 port: 3306
-user: username
-password: p@assw0rd
-dbName: my_database
+user: user
+password: password
+dbName: dbname
+poolSize: 8
+minimumIdle: 2

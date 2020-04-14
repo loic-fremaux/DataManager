@@ -2,3 +2,9 @@ host: localhost
 port: 6379
 password: p@ssw0rd
 databaseId: 1
+poolSize: 16
+minimumIdle: 4
+subscriptionPoolSize: 8
+minimumSubscriptionIdle: 2
+threads: 4
+nettyThreads: 4
