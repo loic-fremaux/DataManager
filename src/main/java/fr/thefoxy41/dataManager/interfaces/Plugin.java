@@ -7,7 +7,9 @@ public interface Plugin {
 
     String getName();
 
-    void log(String message);
+    default void log(String message) {
+        log(Level.INFO, message);
+    }
 
     void log(Level level, String message);
 
