@@ -9,7 +9,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public class MysqlAccess {
-    private MysqlCredentials credentials;
+    private final MysqlCredentials credentials;
     private HikariDataSource hikariDataSource;
 
     MysqlAccess(MysqlCredentials credentials) {

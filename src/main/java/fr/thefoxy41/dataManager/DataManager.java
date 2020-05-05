@@ -9,9 +9,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DataManager {
-    private Plugin plugin;
+    private final Plugin plugin;
 
-    private Map<Class<? extends Module>, Module> modules = new HashMap<>();
+    private final Map<Class<? extends Module>, Module> modules = new HashMap<>();
 
     public DataManager(Plugin plugin) {
         this.plugin = plugin;

@@ -7,8 +7,8 @@ import org.redisson.config.Config;
 import org.redisson.config.TransportMode;
 
 public class RedisAccess {
-    private RedisCredentials credentials;
-    private RedissonClient redissonClient;
+    private final RedisCredentials credentials;
+    private final RedissonClient redissonClient;
 
     public RedisAccess(RedisCredentials credentials) {
         this.credentials = credentials;

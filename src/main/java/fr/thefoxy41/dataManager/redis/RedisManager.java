@@ -17,7 +17,8 @@ import java.util.Map;
 
 public class RedisManager implements Module {
     private Plugin plugin = null;
-    private static Map<String, RedisAccess> redisAccess = new HashMap<>();
+
+    private static final Map<String, RedisAccess> redisAccess = new HashMap<>();
 
     public static final String DEFAULT_CONFIG = "redis.yml";
 

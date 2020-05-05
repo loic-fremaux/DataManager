@@ -19,7 +19,8 @@ import java.util.Map;
 
 public class MysqlManager implements Module {
     private Plugin plugin = null;
-    private static Map<String, MysqlAccess> mysqlAccess = new HashMap<>();
+
+    private static final Map<String, MysqlAccess> mysqlAccess = new HashMap<>();
 
     public static final String DEFAULT_CONFIG = "mysql.yml";
 
