@@ -1,11 +1,11 @@
-package fr.thefoxy41.dataManager.redis;
+package fr.lfremaux.dataManager.redis;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import fr.thefoxy41.dataManager.config.helpers.Configs;
-import fr.thefoxy41.dataManager.exceptions.InvalidAccessException;
-import fr.thefoxy41.dataManager.interfaces.Module;
-import fr.thefoxy41.dataManager.interfaces.Plugin;
+import fr.lfremaux.dataManager.config.helpers.Configs;
+import fr.lfremaux.dataManager.exceptions.InvalidAccessException;
+import fr.lfremaux.dataManager.interfaces.Module;
+import fr.lfremaux.dataManager.interfaces.Plugin;
 import org.redisson.api.RedissonClient;
 
 import java.io.File;

@@ -1,4 +1,4 @@
-package fr.thefoxy41.dataManager.exceptions;
+package fr.lfremaux.dataManager.exceptions;
 
 public class InvalidAccessException extends Exception {
 

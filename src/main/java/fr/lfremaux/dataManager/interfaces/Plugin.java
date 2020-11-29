@@ -1,4 +1,4 @@
-package fr.thefoxy41.dataManager.interfaces;
+package fr.lfremaux.dataManager.interfaces;
 
 import java.io.File;
 import java.util.logging.Level;

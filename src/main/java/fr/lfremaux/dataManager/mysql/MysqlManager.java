@@ -1,12 +1,12 @@
-package fr.thefoxy41.dataManager.mysql;
+package fr.lfremaux.dataManager.mysql;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import fr.thefoxy41.dataManager.config.helpers.Configs;
-import fr.thefoxy41.dataManager.exceptions.InvalidAccessException;
-import fr.thefoxy41.dataManager.interfaces.Module;
-import fr.thefoxy41.dataManager.interfaces.Plugin;
+import fr.lfremaux.dataManager.exceptions.InvalidAccessException;
+import fr.lfremaux.dataManager.config.helpers.Configs;
+import fr.lfremaux.dataManager.interfaces.Module;
+import fr.lfremaux.dataManager.interfaces.Plugin;
 
 import java.io.File;
 import java.io.FileInputStream;

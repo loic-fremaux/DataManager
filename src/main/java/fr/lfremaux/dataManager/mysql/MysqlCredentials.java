@@ -1,6 +1,6 @@
-package fr.thefoxy41.dataManager.mysql;
+package fr.lfremaux.dataManager.mysql;
 
-import fr.thefoxy41.dataManager.auth.Credentials;
+import fr.lfremaux.dataManager.auth.Credentials;
 
 public class MysqlCredentials extends Credentials {
     private String dbName;

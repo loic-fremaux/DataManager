@@ -1,4 +1,4 @@
-package fr.thefoxy41.dataManager.redis;
+package fr.lfremaux.dataManager.redis;
 
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;

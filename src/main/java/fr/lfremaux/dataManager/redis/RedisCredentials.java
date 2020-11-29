@@ -1,6 +1,6 @@
-package fr.thefoxy41.dataManager.redis;
+package fr.lfremaux.dataManager.redis;
 
-import fr.thefoxy41.dataManager.auth.Credentials;
+import fr.lfremaux.dataManager.auth.Credentials;
 
 public class RedisCredentials extends Credentials {
     private int databaseId;

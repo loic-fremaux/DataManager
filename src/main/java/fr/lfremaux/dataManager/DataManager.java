@@ -1,8 +1,8 @@
-package fr.thefoxy41.dataManager;
+package fr.lfremaux.dataManager;
 
-import fr.thefoxy41.dataManager.exceptions.ModuleNotInitializedException;
-import fr.thefoxy41.dataManager.interfaces.Module;
-import fr.thefoxy41.dataManager.interfaces.Plugin;
+import fr.lfremaux.dataManager.exceptions.ModuleNotInitializedException;
+import fr.lfremaux.dataManager.interfaces.Module;
+import fr.lfremaux.dataManager.interfaces.Plugin;
 
 import java.io.IOException;
 import java.util.HashMap;

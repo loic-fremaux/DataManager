@@ -1,4 +1,4 @@
-package fr.thefoxy41.dataManager.config.helpers;
+package fr.lfremaux.dataManager.config.helpers;
 
 import java.io.File;
 import java.io.IOException;

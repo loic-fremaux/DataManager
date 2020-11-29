@@ -1,9 +1,7 @@
-package fr.thefoxy41.dataManager.mysql;
+package fr.lfremaux.dataManager.mysql;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import io.netty.util.concurrent.DefaultThreadFactory;
-import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;

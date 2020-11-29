@@ -1,4 +1,4 @@
-package fr.thefoxy41.dataManager.auth;
+package fr.lfremaux.dataManager.auth;
 
 public abstract class Credentials {
     protected String host;
