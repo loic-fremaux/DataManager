@@ -6,7 +6,7 @@
 
     <groupId>fr.lfremaux</groupId>
     <artifactId>DataManager</artifactId>
-    <version>1.0.0-sql</version>
+    <version>1.0.0-SQL</version>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
