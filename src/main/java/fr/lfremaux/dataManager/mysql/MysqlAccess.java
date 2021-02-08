@@ -15,6 +15,23 @@ public class MysqlAccess {
         setUpHikariCP();
     }
 
+    MysqlAccess(MysqlCredentials credentials, MysqlCustomConfig config) {
+        this.credentials = credentials;
+        setUpHikariCP(config);
+    }
+
+    private void setUpHikariCP(MysqlCustomConfig hikariConfig) {
+        hikariConfig.setJdbcUrl(credentials.toUri());
+        hikariConfig.setUsername(credentials.getUser());
+        hikariConfig.setPassword(credentials.getPassword());
+
+        hikariConfig.setMaximumPoolSize(credentials.getPoolSize());
+        hikariConfig.setPoolName(credentials.getClientName());
+        hikariConfig.setMinimumIdle(credentials.getMinimumIdle());
+
+        this.hikariDataSource = new HikariDataSource(hikariConfig);
+    }
+
     private void setUpHikariCP() {
         HikariConfig hikariConfig = new HikariConfig();
 

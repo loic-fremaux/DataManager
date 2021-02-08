@@ -4,9 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import fr.lfremaux.dataManager.config.helpers.Configs;
 import fr.lfremaux.dataManager.exceptions.InvalidAccessException;
+import fr.lfremaux.dataManager.exceptions.InvalidConfigTypeException;
+import fr.lfremaux.dataManager.interfaces.CustomConfig;
 import fr.lfremaux.dataManager.interfaces.Module;
 import fr.lfremaux.dataManager.interfaces.Plugin;
 import org.redisson.api.RedissonClient;
+import org.redisson.config.Config;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,7 +30,13 @@ public class RedisManager implements Module {
         return redisAccess.get(name);
     }
 
-    public void init(Plugin plugin) throws IOException {
+    public void init(Plugin plugin, CustomConfig config) throws IOException, InvalidConfigTypeException {
+        if (config != null) {
+            if (!(config instanceof Config)) {
+                throw new InvalidConfigTypeException("Configuration should extend org.redisson.config.Config");
+            }
+        }
+
         this.plugin = plugin;
         String configsPath = plugin.getConfigFolder().getPath() + "/redis";
 
@@ -51,8 +60,15 @@ public class RedisManager implements Module {
             RedisCredentials credentials = mapper.readValue(input, RedisCredentials.class);
             String clientName = plugin.getName() + "_" + this.getClass().getName() + "_client";
             credentials.setClientName(clientName);
-            RedisAccess access = new RedisAccess(credentials);
+
             String name = fileConfig.getName().replace(".yml", "");
+            RedisAccess access;
+
+            if (config != null && config.matches(name)) {
+                access = new RedisAccess(credentials, (RedisCustomConfig) config);
+            } else {
+                access = new RedisAccess(credentials);
+            }
 
             plugin.log("New connection established"
                     + " to " + credentials.getHost()

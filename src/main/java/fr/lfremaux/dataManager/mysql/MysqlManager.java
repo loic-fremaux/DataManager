@@ -3,10 +3,14 @@ package fr.lfremaux.dataManager.mysql;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import com.zaxxer.hikari.HikariConfig;
 import fr.lfremaux.dataManager.exceptions.InvalidAccessException;
 import fr.lfremaux.dataManager.config.helpers.Configs;
+import fr.lfremaux.dataManager.exceptions.InvalidConfigTypeException;
+import fr.lfremaux.dataManager.interfaces.CustomConfig;
 import fr.lfremaux.dataManager.interfaces.Module;
 import fr.lfremaux.dataManager.interfaces.Plugin;
+import org.redisson.config.Config;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,7 +33,13 @@ public class MysqlManager implements Module {
         return mysqlAccess.get(name);
     }
 
-    public void init(Plugin plugin) throws IOException {
+    public void init(Plugin plugin, CustomConfig config) throws IOException, InvalidConfigTypeException {
+        if (config != null) {
+            if (!(config instanceof HikariConfig)) {
+                throw new InvalidConfigTypeException("Configuration should extend com.zaxxer.hikari.HikariConfig");
+            }
+        }
+
         this.plugin = plugin;
         String configsPath = plugin.getConfigFolder().getPath() + "/mysql";
 
@@ -54,7 +64,15 @@ public class MysqlManager implements Module {
             MysqlCredentials credentials = mapper.readValue(input, MysqlCredentials.class);
             String clientName = plugin.getName() + "_" + this.getClass().getName() + "_client";
             credentials.setClientName(clientName);
-            MysqlAccess access = new MysqlAccess(credentials);
+
+            String name = fileConfig.getName().replace(".yml", "");
+            MysqlAccess access;
+
+            if (config != null && config.matches(name)) {
+                access = new MysqlAccess(credentials, (MysqlCustomConfig) config);
+            } else {
+                access = new MysqlAccess(credentials);
+            }
 
             plugin.log("New connection established"
                     + " to " + credentials.getHost()
@@ -64,7 +82,7 @@ public class MysqlManager implements Module {
                     + "."
             );
 
-            mysqlAccess.put(fileConfig.getName().replace(".yml", ""), access);
+            mysqlAccess.put(name, access);
 
             try {
                 Connection connection = access.getConnection();

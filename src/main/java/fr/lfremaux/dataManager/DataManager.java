@@ -1,10 +1,13 @@
 package fr.lfremaux.dataManager;
 
+import fr.lfremaux.dataManager.exceptions.InvalidConfigTypeException;
 import fr.lfremaux.dataManager.exceptions.ModuleNotInitializedException;
+import fr.lfremaux.dataManager.interfaces.CustomConfig;
 import fr.lfremaux.dataManager.interfaces.Module;
 import fr.lfremaux.dataManager.interfaces.Plugin;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,15 +27,30 @@ public class DataManager {
      * @return this
      */
     public DataManager with(Class<? extends Module> moduleClass) throws IOException {
-        Module module;
         try {
-            module = moduleClass.newInstance();
-        } catch (InstantiationException | IllegalAccessException e) {
+            return with(moduleClass, null);
+        } catch (InvalidConfigTypeException ignored) {
+        }
+        return this;
+    }
+
+    /**
+     * Init module
+     *
+     * @param moduleClass module type
+     * @param config      provide a custom configuration
+     * @return this
+     */
+    public DataManager with(Class<? extends Module> moduleClass, CustomConfig config) throws IOException, InvalidConfigTypeException {
+        final Module module;
+        try {
+            module = moduleClass.getDeclaredConstructor().newInstance();
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             e.printStackTrace();
             return null;
         }
 
-        module.init(plugin);
+        module.init(plugin, config);
         modules.put(moduleClass, module);
         return this;
     }

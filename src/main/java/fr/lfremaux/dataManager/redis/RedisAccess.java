@@ -15,6 +15,27 @@ public class RedisAccess {
         this.redissonClient = setupRedisson(credentials);
     }
 
+    public RedisAccess(RedisCredentials credentials, RedisCustomConfig config) {
+        this.credentials = credentials;
+        this.redissonClient = setupRedisson(credentials, config);
+    }
+
+    public RedissonClient setupRedisson(RedisCredentials credentials, RedisCustomConfig config) {
+        config.setThreads(credentials.getThreads());
+        config.setNettyThreads(credentials.getNettyThreads());
+        config.useSingleServer()
+                .setAddress(credentials.toUri())
+                .setPassword(credentials.getPassword())
+                .setDatabase(credentials.getDatabaseId())
+                .setSubscriptionConnectionMinimumIdleSize(credentials.getMinimumSubscriptionIdle())
+                .setSubscriptionConnectionPoolSize(credentials.getSubscriptionPoolSize())
+                .setConnectionMinimumIdleSize(credentials.getMinimumIdle())
+                .setConnectionPoolSize(credentials.getPoolSize())
+                .setClientName(credentials.getClientName());
+
+        return Redisson.create(config);
+    }
+
     public RedissonClient setupRedisson(RedisCredentials credentials) {
         Config config = new Config();
         config.setTransportMode(TransportMode.NIO);
